@@ -1,0 +1,79 @@
+# Business — Generative Engine Optimization Map
+
+---
+
+## Pages
+
+### Home
+https://example.com
+Discover handcrafted sourdough bread baked fresh daily. From classic loaves to chocolate sourdough, experience authentic artisan quality delivered to your door.
+
+### About
+https://example.com/about
+Meet the passionate bakers behind your favorite sourdough loaves. Learn how traditional techniques and quality ingredients create bread worth celebrating.
+
+### Bake Notes
+https://example.com/bake-notes
+Unlock sourdough secrets with expert baking notes, seasonal recipes, and insider tips. Master chocolate sourdough, sandwich loaves, and more delicious creations.
+
+### Contact
+https://example.com/contact
+Ready for exceptional sourdough? Get in touch to place orders, ask questions, or arrange delivery. Your next perfect loaf is just a message away.
+
+### Products
+https://example.com/products
+Our Products - Baked by Dev
+
+### Cart
+https://example.com/cart
+Your Cart
+
+### Checkout
+https://example.com/checkout
+Checkout
+
+### Login
+https://example.com/login
+Customer Login
+
+### Account
+https://example.com/account
+My Account
+
+### Order Success
+https://example.com/order-success
+Thank you for your order
+
+### Product Detail
+https://example.com/product/:slug
+Product Details - Baked by Dev
+
+### Category
+https://example.com/category/:slug
+Products - Baked by Dev
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Business
+---
+
+# Additional Resources
+
+- **Sitemap**: https://example.com/sitemap.xml
+- **Robots.txt**: https://example.com/robots.txt

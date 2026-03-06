@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Sourdough Recipes &amp; Baking Tips — Baked by Dev</title>
+    <meta name="description" content="Unlock sourdough secrets with expert baking notes, seasonal recipes, and insider tips. Master chocolate sourdough, sandwich loaves, and more delicious creations.">
+    <meta name="keywords" content="sourdough recipes, chocolate sourdough bread, sourdough sandwich bread, baking tips, sourdough techniques">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: 'af478503-99a0-4b49-af4d-596c26b080fb',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Sourdough Recipes &amp; Baking Tips — Baked by Dev">
+  <meta property="og:description" content="Unlock sourdough secrets with expert baking notes, seasonal recipes, and insider tips. Master chocolate sourdough, sandwich loaves, and more delicious creations.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Sourdough Recipes &amp; Baking Tips — Baked by Dev">
+  <meta name="twitter:description" content="Unlock sourdough secrets with expert baking notes, seasonal recipes, and insider tips. Master chocolate sourdough, sandwich loaves, and more delicious creations.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: #333 !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))), .sub-menu:not(:has(li)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .sub-menu.mobile-expanded { max-height: 500px !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+
+    <div class="mobile-search-panel" id="mobile-search-panel">
+      <div class="search-wrapper">
+        <input type="text" id="mobile-search-input" placeholder="Search products..." autocomplete="off">
+        <button class="search-submit" id="mobile-search-submit" title="Search">
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+        </button>
+        <button class="close-search" id="close-mobile-search">
+          <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="search-results" id="mobile-search-results"></div>
+    </div>
+  
+<script>window.ZAPPY_WEBSITE_ID = "af478503-99a0-4b49-af4d-596c26b080fb";window.ZAPPY_API_BASE = (window.location.pathname.includes('/preview') ? "https://api.zappy5.com" : "https://api.zappy5.com");</script>
+  <nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewbox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" style="display:none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  
+  <button class="phone-header-btn" aria-label="Call">
+    <svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+  
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/business-logo.webp" alt="Baked by Dev" class="logo">
+      </a>
+    </div>
+    
+    <ul class="nav-menu" id="navMenu">
+
+    <li class="menu-item-has-children zappy-products-dropdown">
+      <a href="/products">
+        Products
+        <svg class="dropdown-arrow" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"></path>
+        </svg>
+      </a>
+      <ul class="sub-menu" id="zappy-nav-category-links">
+        <li><a href="/products">All Products</a></li>
+        <!-- Categories will be loaded dynamically -->
+      </ul>
+    </li>
+  <li><a href="/about">About</a></li><li><a href="/bake-notes">Bake Notes</a></li><li><a href="/contact">Contact</a></li></ul><div class="nav-ecommerce-icons nav-icons-left"><a href="/login" class="login-link nav-login" title="Login"><svg class="login-icon" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></a><a href="#cart" class="cart-link nav-cart" id="cart-drawer-toggle" title="Cart"><svg class="cart-icon" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span class="cart-count">0</span></a><div class="nav-search-box">
+    <input type="text" class="nav-search-input" id="nav-search-input" placeholder="Search products..." autocomplete="off">
+    <button class="nav-search-btn" id="nav-search-btn" title="Search">
+      <svg class="search-icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+    </button>
+    <div class="nav-search-results" id="nav-search-results"></div>
+  </div></div><div class="nav-ecommerce-icons nav-icons-right"><button class="nav-search-toggle" id="mobile-search-toggle" title="Search"><svg width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg></button></div>
+    
+    
+  </div>
+</nav>
+
+    <nav class="zappy-catalog-menu ltr" id="zappy-catalog-menu" dir="ltr">
+      <div class="catalog-menu-container">
+        <a href="/products" class="catalog-menu-item catalog-menu-all">All Products</a>
+        <div class="catalog-menu-categories" id="zappy-category-links">
+          <!-- Categories will be loaded dynamically -->
+        </div>
+      </div>
+    </nav>
+  
+  
+  <main>
+    <section class="bake-notes-spotlight-section" data-layout-spec="Bake Notes-spotlight">
+  <div class="bake-notes-spotlight-container">
+    <div class="bake-notes-spotlight-content">
+      <h1>Bake Notes</h1>
+      <p>Each loaf is a small experiment in hydration, fermentation time, and flour blend. I keep detailed notes on every bake—tracking how the dough feels, how the crumb opens, and what adjustments might improve the next batch. These notes help me understand the sourdough bread company process deeply and share what I learn with you.</p>
+      <p>The weekly bake changes based on season, starter activity, and what feels right. If you're curious about current availability or want to request a specific style—like chocolate sourdough bread or sourdough sandwich bread—please reach out through the contact page. I'm always happy to discuss custom orders or answer questions about my sourdough bakery approach.</p>
+    </div>
+    
+    <div class="bake-notes-spotlight-image-wrapper">
+      <div class="bake-notes-spotlight-paper-backplate"></div>
+      <img data-placeholder="bake-notes-spotlight-image-1" data-context="Artisan sourdough bakery workspace scene: rustic wooden bench with freshly shaped sourdough dough resting on linen cloth, open handwritten notebook with baking notes and sketches beside it, natural morning light streaming from side window, flour dusted surface, simple ceramic bowl with starter, warm cream and beige tones, intimate and personal food photography style" width="1200" height="600" src="/assets/site-bake-notes-spotlight-image-1.webp" alt="Sourdough dough and baking journal on wooden bench">
+    </div>
+  </div>
+  
+  <div class="bake-notes-spotlight-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 80" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bake-notes-ink-wash" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#F1E7D7;stop-opacity:1"></stop>
+          <stop offset="100%" style="stop-color:#E9E0D0;stop-opacity:1"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0,80 L0,20 Q100,18 200,22 T400,20 Q600,22 800,18 T1000,20 Q1100,22 1200,20 L1200,80 Z" fill="#F5ECDD"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="bake-notes-services-section" data-layout-spec="Bake Notes-services">
+  <div class="bake-notes-services-container">
+    <div class="bake-notes-services-header">
+      <h2>The lineup (examples)</h2>
+      <p>Each loaf is a story of time, flour, and care. Below are a few of my regular bakes—hydration levels, flavor notes, and suggested pairings included. These are living recipes, always evolving with the seasons and what feels right in the moment.</p>
+    </div>
+    
+    <div class="bake-notes-services-grid">
+      <article class="bake-notes-service-card">
+        <h3>Country Loaf</h3>
+        <div class="bake-notes-service-specs">
+          <p><strong>Hydration:</strong> 78%</p>
+          <p><strong>Flour blend:</strong> 80% bread flour, 20% whole wheat</p>
+          <p><strong>Fermentation:</strong> 12-hour bulk, 14-hour cold proof</p>
+          <p><strong>Flavor goal:</strong> Mild tang, open crumb, slightly nutty</p>
+          <p><strong>Pairs with:</strong> Butter and jam, soft cheeses, olive oil dips</p>
+        </div>
+      </article>
+      
+      <article class="bake-notes-service-card">
+        <h3>Seeded Loaf</h3>
+        <div class="bake-notes-service-specs">
+          <p><strong>Hydration:</strong> 75%</p>
+          <p><strong>Flour blend:</strong> 70% bread flour, 20% whole wheat, 10% rye</p>
+          <p><strong>Fermentation:</strong> 10-hour bulk, 16-hour cold proof</p>
+          <p><strong>Flavor goal:</strong> Earthy, hearty, with toasted seed crunch</p>
+          <p><strong>Pairs with:</strong> Avocado toast, smoked salmon, aged cheddar</p>
+        </div>
+      </article>
+      
+      <article class="bake-notes-service-card">
+        <h3>Olive &amp; Herb Loaf</h3>
+        <div class="bake-notes-service-specs">
+          <p><strong>Hydration:</strong> 76%</p>
+          <p><strong>Flour blend:</strong> 85% bread flour, 15% whole wheat</p>
+          <p><strong>Fermentation:</strong> 11-hour bulk, 12-hour cold proof</p>
+          <p><strong>Flavor goal:</strong> Savory, Mediterranean, with rosemary brightness</p>
+          <p><strong>Pairs with:</strong> Hummus, roasted vegetables, Italian antipasti</p>
+        </div>
+      </article>
+      
+      <article class="bake-notes-service-card">
+        <h3>Seasonal Special</h3>
+        <div class="bake-notes-service-specs">
+          <p><strong>Hydration:</strong> 80%</p>
+          <p><strong>Flour blend:</strong> Varies—current: 60% bread, 30% spelt, 10% rye</p>
+          <p><strong>Fermentation:</strong> 13-hour bulk, 15-hour cold proof</p>
+          <p><strong>Flavor goal:</strong> Experimental, rotating with harvest and mood</p>
+          <p><strong>Pairs with:</strong> Whatever feels right—sometimes honey, sometimes soup</p>
+        </div>
+      </article>
+    </div>
+  </div>
+  
+  <div class="bake-notes-services-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,35 Q60,28 120,32 T240,30 Q300,34 360,28 T480,32 Q540,30 600,34 T720,28 Q780,32 840,30 T960,34 Q1020,28 1080,32 T1200,30 L1200,60 Z" fill="#F5ECDD"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="bake-notes-process-section" data-layout-spec="Bake Notes-process">
+  <div class="bake-notes-process-container">
+    <div class="bake-notes-process-content">
+      <div class="bake-notes-process-intro">
+        <h2>How a loaf becomes a loaf</h2>
+        <p>Every sourdough bread company follows a rhythm—feed, fold, shape, bake. Here's the gentle dance that turns flour and water into the perfect sourdough loaf, step by patient step.</p>
+      </div>
+
+      <div class="bake-notes-process-layout">
+        <div class="bake-notes-process-steps">
+          <div class="bake-notes-process-step">
+            <div class="bake-notes-process-step-number">1</div>
+            <div class="bake-notes-process-step-content">
+              <h3>Feed starter</h3>
+              <p>The heart of every sourdough bakery: a bubbly, active starter. We feed ours twice daily with equal parts flour and filtered water, watching it double in size and develop that tangy, yeasty aroma that tells us it's ready to leaven.</p>
+            </div>
+          </div>
+
+          <div class="bake-notes-process-step">
+            <div class="bake-notes-process-step-number">2</div>
+            <div class="bake-notes-process-step-content">
+              <h3>Mix &amp; rest</h3>
+              <p>Combine active starter with bread flour, whole wheat, water, and salt. A gentle hand-mix brings everything together, then we let it rest—autolyse—for 30 minutes so the flour hydrates and gluten begins to form naturally.</p>
+            </div>
+          </div>
+
+          <div class="bake-notes-process-step">
+            <div class="bake-notes-process-step-number">3</div>
+            <div class="bake-notes-process-step-content">
+              <h3>Stretch &amp; folds</h3>
+              <p>Over the next few hours, we perform a series of gentle stretches and folds—coaxing strength into the dough without kneading. Each fold builds structure, traps air, and develops that signature open crumb we love in artisan sourdough bread.</p>
+            </div>
+          </div>
+
+          <div class="bake-notes-process-step">
+            <div class="bake-notes-process-step-number">4</div>
+            <div class="bake-notes-process-step-content">
+              <h3>Shape &amp; proof</h3>
+              <p>Once the dough has doubled, we shape it into tight rounds or batards, creating surface tension that helps the loaf rise tall. Then into the fridge for a slow, cold proof overnight—this is where the deep, complex flavors develop.</p>
+            </div>
+          </div>
+
+          <div class="bake-notes-process-step">
+            <div class="bake-notes-process-step-number">5</div>
+            <div class="bake-notes-process-step-content">
+              <h3>Bake &amp; cool</h3>
+              <p>Straight from the fridge into a blazing-hot Dutch oven. We score the top—a signature pattern—and watch steam work its magic, creating that crackling crust. After 45 minutes, out comes a golden loaf. Now the hardest part: waiting for it to cool completely before slicing.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bake-notes-process-images">
+          <div class="bake-notes-process-image-wrapper bake-notes-process-image-1">
+            <img data-placeholder="bake-notes-process-image-1" data-context="Close-up of active sourdough starter in a glass jar, showing vigorous bubbles, creamy texture, and peaks from feeding. Warm natural light, rustic kitchen background, focus on the bubbly fermentation activity that makes sourdough bread rise." width="400" height="500" src="/assets/site-bake-notes-process-image-1.webp" alt="Active sourdough starter with bubbles">
+          </div>
+          <div class="bake-notes-process-image-wrapper bake-notes-process-image-2">
+            <img data-placeholder="bake-notes-process-image-2" data-context="Freshly scored sourdough loaf being placed into a hot Dutch oven for baking. Steam rising, beautiful score pattern visible on the dough surface, hands in oven mitts, warm oven glow. Captures the moment before the magic of oven spring." width="400" height="500" src="/assets/site-bake-notes-process-image-2.webp" alt="Scored sourdough loaf entering oven">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bake-notes-process-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewbox="0 0 1200 60" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="wheat-doodle" x="0" y="0" width="200" height="60" patternunits="userSpaceOnUse">
+          <g transform="translate(100, 20)">
+            <path d="M0,0 L0,15 M-2,3 L2,3 M-2,6 L2,6 M-2,9 L2,9 M-2,12 L2,12" stroke="rgba(59,46,35,0.3)" stroke-width="1" fill="#F5ECDD"></path>
+          </g>
+        </pattern>
+      </defs>
+      <path d="M0,60 L0,30 L200,32 L400,28 L600,31 L800,29 L1000,32 L1200,30 L1200,60 Z" fill="#F5ECDD"></path>
+      <line x1="0" y1="30" x2="1200" y2="30" stroke="rgba(59,46,35,0.2)" stroke-width="2" stroke-dasharray="8,4"></line>
+      <rect x="0" y="0" width="1200" height="60" fill="url(#wheat-doodle)" opacity="0.6"></rect>
+    </svg>
+  </div>
+</section>
+
+<section class="bake-notes-faq-section" data-layout-spec="Bake Notes-faq">
+  <div class="bake-notes-faq-container">
+    <div class="bake-notes-faq-header">
+      <h2>A few quick answers</h2>
+      <p>Common questions about our sourdough bread and baking process</p>
+    </div>
+
+    <div class="bake-notes-faq-list">
+      <div class="bake-notes-faq-item">
+        <h3>What makes sourdough bread special?</h3>
+        <p>Sourdough is naturally leavened using wild yeast and beneficial bacteria, creating complex flavors and better digestibility. The long fermentation breaks down gluten and phytic acid, making nutrients more available. It's an ancient method that creates bread with character, depth, and a beautiful crust.</p>
+      </div>
+
+      <div class="bake-notes-faq-item">
+        <h3>How tangy is your sourdough?</h3>
+        <p>Our sourdough has a mild, balanced tang—not overly sour. The flavor is complex with subtle notes of wheat and a hint of sweetness. We control fermentation time and temperature to create bread that's flavorful without being sharp, perfect for sandwiches or toast with butter.</p>
+      </div>
+
+      <div class="bake-notes-faq-item">
+        <h3>How should I store my sourdough bread?</h3>
+        <p>Keep your loaf cut-side down on a cutting board or in a paper bag at room temperature for 2-3 days. Avoid plastic bags—they trap moisture and soften the crust. For longer storage, slice and freeze in an airtight container for up to 3 months. Thaw slices as needed.</p>
+      </div>
+
+      <div class="bake-notes-faq-item">
+        <h3>What's the best way to reheat sourdough?</h3>
+        <p>For crusty loaves, sprinkle the crust lightly with water and warm in a 350°F oven for 10-15 minutes. For slices, toast them fresh or warm gently in a dry skillet. The crust will crisp up beautifully, and the interior will soften again—almost like fresh-baked.</p>
+      </div>
+
+      <div class="bake-notes-faq-item">
+        <h3>Any allergen or flour notes I should know?</h3>
+        <p>Our sourdough is made with organic wheat flour and contains gluten. We bake in a shared kitchen, so trace amounts of nuts or seeds may be present. All our breads are dairy-free and egg-free unless noted (like our chocolate sourdough). Check ingredient labels for specific varieties.</p>
+      </div>
+    </div>
+
+    <div class="bake-notes-faq-image-wrapper">
+      <img data-placeholder="bake-notes-faq-image-1" data-context="Warm artisan sourdough loaf on a rustic wooden cutting board with a pat of golden butter and a small dish of olive oil beside it, natural morning light, inviting and homey, food photography style" width="600" height="400" src="/assets/site-bake-notes-faq-image-1.webp" alt="Freshly baked sourdough loaf on cutting board with butter and olive oil">
+    </div>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-top">
+      <div class="footer-column footer-brand">
+        <img src="/assets/business-logo.webp" alt="Baked by Dev" class="logo">
+        <p class="footer-tagline">Crafting delicious moments, one bake at a time.</p>
+      </div>
+      
+      <div class="footer-column footer-links">
+        <h3 class="footer-heading">Quick Links</h3>
+        <ul class="footer-nav">
+          <li><a href="/about">About</a></li>
+          <li><a href="/bake-notes">Bake Notes</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column footer-contact">
+        <h3 class="footer-heading">Get in Touch</h3>
+        <ul class="contact-list">
+          <li><i class="fas fa-envelope"></i> <a href="mailto:[business_email]">[business_email]</a></li>
+          <li><i class="fas fa-phone"></i> <a href="tel:[business_phone]">[business_phone]</a></li>
+          <li><a href="/"><i class="fas fa-map-marker-alt"></i> <span>[business_address]</span></a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column footer-social">
+        <h3 class="footer-heading">Follow Us</h3>
+        <div class="social-links">
+          <a href="[facebook_handle]" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="[instagram_handle]" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="[whatsapp_handle]" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        <p>© 2026 Baked by Dev. All rights reserved.</p>
+      </div>
+      <div class="footer-legal">
+        <a href="/privacy">Privacy Policy</a>
+        <span class="separator">|</span>
+        <a href="/terms">Terms &amp; Conditions</a><span class="separator">|</span>
+            <a href="/return-policy" aria-label="Return Policy">
+              Return Policy
+            </a>
+        <span class="separator">|</span>
+        <a href="/accessibility">Accessibility</a>
+        <span class="separator">|</span>
+        <a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');var cm=document.querySelector('.zappy-catalog-menu');if(!nb)return;var fb='rgba(42,34,28,0.85)';var th=60;nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';function onS(){var y=window.scrollY||window.pageYOffset;if(y>th){nb.style.background=fb;nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';if(cm){cm.style.background=fb;cm.style.backdropFilter='blur(12px)';cm.style.webkitBackdropFilter='blur(12px)';}}else{nb.style.background='transparent';nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';if(cm){cm.style.background='transparent';cm.style.backdropFilter='none';cm.style.webkitBackdropFilter='none';}}}window.addEventListener('scroll',onS,{passive:true});onS();})();
+    </script>
+</body>
+</html>
